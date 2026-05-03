@@ -1,11 +1,61 @@
 """Streamlit frontend for Nando the Hunter career agent."""
 
 import base64
+import hashlib
 import os
 from pathlib import Path
 
 import requests
 import streamlit as st
+
+
+def check_password():
+    app_password = os.getenv("APP_PASSWORD", "hunter2026")
+
+    if st.session_state.get("authenticated"):
+        return
+
+    st.markdown(
+        """
+    <div style="display:flex; flex-direction:column; align-items:center;
+                justify-content:center; height:60vh;">
+        <div style="font-family:Georgia,serif; font-size:2em;
+                    color:#c9952a; letter-spacing:3px; margin-bottom:8px;">
+            🎯 NANDO THE HUNTER
+        </div>
+        <div style="color:#7a6840; font-family:Georgia,serif;
+                    letter-spacing:2px; margin-bottom:32px;">
+            ⚔ Track. Hunt. Land. ⚔
+        </div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    pwd = st.text_input(
+        "Enter password",
+        type="password",
+        key="login_input",
+        placeholder="Enter the hunter's password...",
+    )
+
+    col1, col2, col3 = st.columns([2, 1, 2])
+    with col2:
+        login_btn = st.button("🗝 Enter", use_container_width=True)
+
+    if login_btn:
+        entered_hash = hashlib.sha256(pwd.encode()).hexdigest()
+        correct_hash = hashlib.sha256(app_password.encode()).hexdigest()
+        if entered_hash == correct_hash:
+            st.session_state["authenticated"] = True
+            st.rerun()
+        else:
+            st.error("Wrong password. The gates remain closed.")
+
+    st.stop()
+
+
+check_password()
 
 st.set_page_config(
     page_title="Nando the Hunter",
