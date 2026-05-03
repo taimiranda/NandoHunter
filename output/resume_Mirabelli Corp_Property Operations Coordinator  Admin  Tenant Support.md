@@ -1,0 +1,5 @@
+- • Supported day-to-day operations by overseeing inventory flow and maintaining organized records to ensure smooth property management processes.
+- • Coordinated tenant and team communications, resolving issues promptly to maintain service quality and operational efficiency.
+- • Utilized Microsoft Office proficiency to manage scheduling and document organization, enhancing workflow consistency.
+- • Onboarded and supported over 95 staff members, fostering a collaborative environment and streamlining operations.
+- • Managed multiple projects simultaneously, applying strong organizational skills to meet overlapping deadlines and client needs.
