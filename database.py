@@ -4,10 +4,11 @@ No ORM, no SQLAlchemy — pure sqlite3 with context managers.
 """
 
 import sqlite3
+import os
 from datetime import datetime
 from pathlib import Path
 
-DB_PATH = "./jobs.db"
+DB_PATH = os.getenv("DATABASE_PATH", "./jobs.db")
 JOB_SELECT_COLUMNS = (
     "id, hash, title, company, location, salary_raw, remote, url, "
     "description_raw, ai_score, ai_summary, ai_reasons, resume_md, "
