@@ -1,6 +1,7 @@
 """Streamlit frontend for Nando the Hunter career agent."""
 
 import base64
+import os
 from pathlib import Path
 
 import requests
@@ -209,7 +210,7 @@ li {
     unsafe_allow_html=True,
 )
 
-API_URL = "http://localhost:8000"
+API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000")
 
 for key, value in {
     "new_jobs": [],
@@ -226,7 +227,7 @@ for key, value in {
 
 def fetch_jobs(status: str) -> list:
     try:
-        response = requests.get(f"{API_URL}/jobs?status={status}", timeout=10)
+        response = requests.get(f"{API_BASE}/jobs?status={status}", timeout=10)
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -236,7 +237,7 @@ def fetch_jobs(status: str) -> list:
 
 def fetch_profile() -> dict:
     try:
-        response = requests.get(f"{API_URL}/profile", timeout=10)
+        response = requests.get(f"{API_BASE}/profile", timeout=10)
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -246,7 +247,7 @@ def fetch_profile() -> dict:
 
 def trigger_scraper():
     try:
-        response = requests.post(f"{API_URL}/scrape", timeout=180)
+        response = requests.post(f"{API_BASE}/scrape", timeout=180)
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -256,7 +257,7 @@ def trigger_scraper():
 
 def accept_job(job_id: int) -> dict | None:
     try:
-        response = requests.post(f"{API_URL}/jobs/{job_id}/accept", timeout=10)
+        response = requests.post(f"{API_BASE}/jobs/{job_id}/accept", timeout=10)
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -266,7 +267,7 @@ def accept_job(job_id: int) -> dict | None:
 
 def reject_job(job_id: int) -> bool:
     try:
-        response = requests.post(f"{API_URL}/jobs/{job_id}/reject", timeout=10)
+        response = requests.post(f"{API_BASE}/jobs/{job_id}/reject", timeout=10)
         response.raise_for_status()
         return True
     except Exception as e:
@@ -276,7 +277,7 @@ def reject_job(job_id: int) -> bool:
 
 def reopen_job(job_id: int) -> bool:
     try:
-        response = requests.post(f"{API_URL}/jobs/{job_id}/reopen", timeout=10)
+        response = requests.post(f"{API_BASE}/jobs/{job_id}/reopen", timeout=10)
         response.raise_for_status()
         return True
     except Exception as e:
@@ -287,7 +288,7 @@ def reopen_job(job_id: int) -> bool:
 def save_profile(master_resume: str, target_description: str) -> bool:
     try:
         response = requests.post(
-            f"{API_URL}/profile",
+            f"{API_BASE}/profile",
             json={"master_resume": master_resume, "target_description": target_description},
             timeout=10,
         )
@@ -393,8 +394,8 @@ def render_job_card(job: dict) -> None:
 
 def _render_preview_content(job_id: int, payload: dict) -> None:
     company = payload.get("company", "company")
-    resume_docx_url = f"{API_URL}/jobs/{job_id}/resume.docx"
-    cover_docx_url = f"{API_URL}/jobs/{job_id}/cover.docx"
+    resume_docx_url = f"{API_BASE}/jobs/{job_id}/resume.docx"
+    cover_docx_url = f"{API_BASE}/jobs/{job_id}/cover.docx"
 
     st.markdown(
         f"""
@@ -534,9 +535,9 @@ with shell_right:
                 if job.get("entry_type") == "accepted":
                     d1, d2, d3, d4 = st.columns(4)
                     with d1:
-                        st.link_button("Resume (.docx)", f"{API_URL}/jobs/{job.get('id')}/resume.docx", use_container_width=True)
+                        st.link_button("Resume (.docx)", f"{API_BASE}/jobs/{job.get('id')}/resume.docx", use_container_width=True)
                     with d2:
-                        st.link_button("Cover (.docx)", f"{API_URL}/jobs/{job.get('id')}/cover.docx", use_container_width=True)
+                        st.link_button("Cover (.docx)", f"{API_BASE}/jobs/{job.get('id')}/cover.docx", use_container_width=True)
                     with d3:
                         if st.button("↩ REOPEN", key=f"reopen_{job.get('id')}", use_container_width=True):
                             if reopen_job(job.get("id")):
